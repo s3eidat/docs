@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Docs — Free Private Word Processor, Opens and Saves .docx | S3eidat Tools</title>
+<meta name="description" content="A real paged word processor in your browser: styles, lists, tables, images, headers and footers, page numbers, contents, find and replace. Opens and saves .docx, prints exact PDFs. Free, offline, nothing uploaded.">
+<meta property="og:title" content="Docs — a free, private word processor">
+<meta property="og:description" content="Write on real pages, open and save .docx, print exact PDFs. Runs 100% in your browser.">
+<link rel="icon" href="kit/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/kit.css">
+<link rel="stylesheet" href="app.css">
+<script src="kit/kit.js"></script>
+<style id="dc-dyn"></style>
+<style id="dc-print"></style>
+<!--s3:seo-->
+<link rel="canonical" href="https://s3eidat.github.io/docs/">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="S3eidat Tools">
+<meta property="og:url" content="https://s3eidat.github.io/docs/">
+<meta property="og:image" content="https://s3eidat.github.io/docs/screenshot.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Docs — Write documents and export Word or PDF">
+<meta name="twitter:description" content="Write documents and export Word or PDF. Free, private and runs 100% in your browser: no sign-up, no uploads.">
+<meta name="twitter:image" content="https://s3eidat.github.io/docs/screenshot.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Docs", "url": "https://s3eidat.github.io/docs/", "description": "Write documents and export Word or PDF. Free, private and runs 100% in your browser: no sign-up, no uploads.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://s3eidat.github.io/docs/screenshot.png", "author": {"@type": "Person", "name": "s3eidat", "url": "https://github.com/s3eidat"}}</script>
+<!--/s3:seo-->
+</head>
+<body data-tool="docs">
+<main class="dc-main">
+  <h1 class="dc-sr">Docs: a private word processor that opens and saves .docx</h1>
+  <div class="dc-app" id="app">
+
+    <section class="dc-home" id="home" hidden aria-label="Start">
+      <div class="dc-home-in">
+        <div class="dc-home-top">
+          <div>
+            <h2>Start a document</h2>
+            <p class="muted">Everything stays in this browser. Open a .docx, or pick a template.</p>
+          </div>
+          <div class="row">
+            <button type="button" class="btn" id="open-btn"><svg class="i"><use href="#i-upload"/></svg> Open file</button>
+            <button type="button" class="btn primary" id="new-blank">New blank document</button>
+          </div>
+        </div>
+        <div class="dc-tpls" id="tpls"></div>
+        <div class="drop dc-drop" id="drop" tabindex="0" role="button" aria-label="Open a .docx, .md, .txt or .html file">
+          <b>Drop a .docx here to open it</b>
+          <span class="faint">.docx, .md, .txt and .html work too. The file never leaves your device.</span>
+        </div>
+        <div class="row between dc-recent-h"><h3>Recent documents</h3><span class="faint" id="store-note"></span></div>
+        <ul class="dc-recent" id="recent"></ul>
+      </div>
+    </section>
+
+    <section class="dc-ed" id="ed" aria-label="Editor">
+      <div class="dc-bar no-print">
+        <button type="button" class="dc-ib" id="home-btn" title="All documents" aria-label="All documents">☰</button>
+        <label class="dc-sr" for="doc-title">Document title</label>
+        <input class="dc-title" id="doc-title" dir="auto" placeholder="Untitled document" maxlength="200" autocomplete="off" spellcheck="false">
+        <span class="dc-saved" id="saved" role="status"></span>
+        <nav class="dc-menus" id="menus" aria-label="Menus">
+          <button type="button" class="dc-mb" data-menu="file">File</button>
+          <button type="button" class="dc-mb" data-menu="edit">Edit</button>
+          <button type="button" class="dc-mb" data-menu="insert">Insert</button>
+          <button type="button" class="dc-mb" data-menu="format">Format</button>
+          <button type="button" class="dc-mb" data-menu="view">View</button>
+        </nav>
+        <span class="grow"></span>
+        <button type="button" class="btn small" id="print-btn" title="Print or save as PDF (Ctrl+P)">PDF</button>
+        <button type="button" class="btn small primary" id="docx-btn" title="Download as .docx">.docx</button>
+      </div>
+      <div class="dc-tools no-print" id="tools" role="toolbar" aria-label="Formatting"></div>
+      <div class="dc-ctx no-print" id="ctx" hidden></div>
+      <div class="dc-work">
+        <aside class="dc-outline no-print" id="outline" aria-label="Outline" hidden>
+          <div class="dc-side-h"><b>Outline</b><button type="button" class="dc-ib" id="outline-x" aria-label="Close outline">×</button></div>
+          <ol class="dc-ol" id="ol"></ol>
+        </aside>
+        <div class="dc-canvas" id="canvas">
+          <div class="dc-stack" id="stack"></div>
+        </div>
+        <aside class="dc-find no-print" id="find" aria-label="Find and replace" hidden>
+          <div class="dc-side-h"><b>Find and replace</b><button type="button" class="dc-ib" id="find-x" aria-label="Close find">×</button></div>
+          <label class="field"><span>Find</span><input class="input" id="f-q" dir="auto" autocomplete="off"></label>
+          <label class="field"><span>Replace with</span><input class="input" id="f-r" dir="auto" autocomplete="off"></label>
+          <div class="row dc-find-opts">
+            <label class="check"><input type="checkbox" id="f-case"> Match case</label>
+            <label class="check"><input type="checkbox" id="f-word"> Whole words</label>
+          </div>
+          <div class="row between"><span class="faint" id="f-n">Type to search</span>
+            <span class="row"><button type="button" class="btn small" id="f-prev" aria-label="Previous match">↑</button><button type="button" class="btn small" id="f-next" aria-label="Next match">↓</button></span></div>
+          <div class="row"><button type="button" class="btn small" id="f-one">Replace</button><button type="button" class="btn small" id="f-all">Replace all</button></div>
+        </aside>
+      </div>
+      <div class="dc-status no-print">
+        <span id="st-page">Page 1 of 1</span>
+        <button type="button" class="dc-link" id="st-words">0 words</button>
+        <span class="grow"></span>
+        <span class="faint dc-hide-sm" id="st-size"></span>
+        <button type="button" class="dc-ib" id="z-out" aria-label="Zoom out">−</button>
+        <button type="button" class="dc-link" id="z-val" title="Fit to width">100%</button>
+        <button type="button" class="dc-ib" id="z-in" aria-label="Zoom in">+</button>
+      </div>
+    </section>
+  </div>
+  <div class="dc-measure dc-body" id="measure" aria-hidden="true"></div>
+
+  <section class="dc-about no-print">
+    <h2>A word processor that keeps your documents on your device</h2>
+    <div class="grid-3">
+      <div><h3>Real pages</h3><p>Write on A4, Letter, Legal or A5 sheets with your margins, page breaks, headers and footers with page numbers, and a table of contents that knows which page each heading is on. What you see is what prints.</p></div>
+      <div><h3>Everything you format</h3><p>Styles (Title, Headings, Quote, Code), fonts on your device, sizes, colours, highlights, alignment and justify, spacing, indents, bullets, numbers, checklists, tables with merged and shaded cells, images, links, and Arabic right-to-left paragraphs.</p></div>
+      <div><h3>Open and save .docx</h3><p>Open .docx files and save them back, or export PDF (print), Markdown, HTML and plain text. Documents autosave in this browser, it works offline, and nothing is ever uploaded.</p></div>
+    </div>
+    <p class="faint">No account, no server, no analytics. Clearing this site's data in your browser deletes your documents, so download a .docx of anything important.</p>
+  </section>
+</main>
+<input type="file" id="file-in" accept=".docx,.md,.markdown,.txt,.html,.htm,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+<input type="file" id="img-in" accept="image/*" multiple hidden>
+<script src="lib/jszip.min.js"></script>
+<script src="lib/docx.umd.js"></script>
+<script src="js/model.js"></script>
+<script src="js/render.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/io.js"></script>
+<script src="js/docx.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/tests.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
